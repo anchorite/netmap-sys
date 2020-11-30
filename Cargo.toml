@@ -3,6 +3,7 @@ name = "netmap-sys"
 version = "0.1.0"
 authors = ["Alexander Dimitrov <3321085+anchorite@users.noreply.github.com>"]
 edition = "2018"
+links = "netmap"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
