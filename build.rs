@@ -29,6 +29,7 @@ impl Builder {
 
         self.rerun_if_libnetmap_file_changed();
         self.make_libnetmap();
+        self.link_libnetmap();
     }
 
     fn export_include_path(&self) {
@@ -62,6 +63,14 @@ impl Builder {
             .expect("Failed to generate bindings")
             .write_to_file(self.out_dir.join("bindings.rs"))
             .expect("Failed to write bindings");
+    }
+
+    fn link_libnetmap(&self) {
+        println!(
+            "cargo:rustc-link-search=native={}",
+            self.out_dir.join("libnetmap").to_str().unwrap()
+        );
+        println!("cargo:rustc-link-lib=static=netmap",);
     }
 }
 
