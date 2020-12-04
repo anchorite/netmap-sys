@@ -27,11 +27,18 @@ impl Builder {
         self.export_include_path();
         self.generate_bindings();
 
+        self.rerun_if_libnetmap_file_changed();
         self.make_libnetmap();
     }
 
     fn export_include_path(&self) {
         println!("cargo:include={}", abs_path(&self.include_dir));
+    }
+
+    fn rerun_if_libnetmap_file_changed(&self) {
+        for file in self.src_libnetmap_dir.read_dir().unwrap() {
+            println!("cargo:rerun-if-changed={}", abs_path(&file.unwrap().path()));
+        }
     }
 
     fn rerun_if_wrapper_changed(&self) {
