@@ -13,12 +13,12 @@ impl Builder {
     pub fn new() -> Self {
         let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
         let include_dir = PathBuf::from("netmap/sys");
-        let libnetmap_dir = PathBuf::from("netmap/libnetmap");
+        let src_libnetmap_dir = PathBuf::from("netmap/libnetmap");
 
         Self {
             out_dir,
             include_dir,
-            src_libnetmap_dir: libnetmap_dir,
+            src_libnetmap_dir,
         }
     }
 
@@ -55,6 +55,7 @@ impl Builder {
         bindgen::Builder::default()
             .header("src/wrapper.h")
             .clang_arg(format!("-I{}", self.include_dir.to_str().unwrap()))
+            .clang_arg(format!("-I{}", self.src_libnetmap_dir.to_str().unwrap()))
             //.default_enum_style(bindgen::EnumVariation::NewType { is_bitfield: false })
             .parse_callbacks(Box::new(bindgen::CargoCallbacks))
             .generate()
