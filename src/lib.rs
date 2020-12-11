@@ -40,6 +40,33 @@ pub unsafe fn netmap_rxring(interface: *mut netmap_if, index: u16) -> *mut netma
     netmap_ring_by_index(interface, index)
 }
 
+/// # Safety
+///
+/// [`index`] *must* be in [0, num_slots)
+pub unsafe fn netmap_slot_from_ring(ring: *mut netmap_ring, index: u16) -> *mut netmap_slot {
+    let index = index as usize;
+    &mut (*ring).slot.as_mut_slice(index + 1)[index] as *mut netmap_slot
+}
+
+unsafe fn netmap_buf_index(slot: *mut netmap_slot) -> usize {
+    (*slot).buf_idx as usize
+}
+
+unsafe fn netmap_buf_from_ring(ring: *mut netmap_ring, index: usize) -> *mut u8 {
+    let base = ring as *mut u8;
+    let offset = (*ring).buf_ofs as isize + index as isize * (*ring).nr_buf_size as isize;
+    base.offset(offset as isize)
+}
+
+/// # Safety
+///
+/// `ring` and `slot` should be valid pointers obtained from [`netmap_slot_from_ring`] and
+/// [`netmap_txring`]/[`netmap_rx_ring_index`]
+pub unsafe fn netmap_buf_from_ring_slot(ring: *mut netmap_ring, slot: *mut netmap_slot) -> *mut u8 {
+    let index = netmap_buf_index(slot);
+    netmap_buf_from_ring(ring, index)
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
