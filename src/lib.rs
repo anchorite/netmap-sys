@@ -67,6 +67,13 @@ pub unsafe fn netmap_buf_from_ring_slot(ring: *mut netmap_ring, slot: *mut netma
     netmap_buf_from_ring(ring, index)
 }
 
+/// # Safety
+///
+/// `ring` should be valid pointer obtained from [`netmap_txring`]/[`netmap_rx_ring_index`]
+pub unsafe fn netmap_ring_empty(ring: *mut netmap_ring) -> bool {
+    (*ring).head == (*ring).tail
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
